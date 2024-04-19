@@ -3,7 +3,14 @@
     "next/core-web-vitals",
     "plugin:eslint-plugin-next-on-pages/recommended"
   ],
-  "plugins": [
-    "eslint-plugin-next-on-pages"
-  ]
+  "plugins": ["eslint-plugin-next-on-pages", "simple-import-sort"],
+  "rules": {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": "latest"
+  }
 }
+
