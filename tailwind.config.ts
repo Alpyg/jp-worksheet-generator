@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        print: { raw: "print" },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -78,4 +81,3 @@ const config = {
 } satisfies Config;
 
 export default config;
-

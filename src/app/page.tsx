@@ -1,16 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useReactToPrint } from "react-to-print";
 import JishoAPI from "unofficial-jisho-api";
 import { z } from "zod";
 
-import { PracticeGrid } from "@/components/practice-grid";
+import { KanjiSheet } from "@/components/kanji-sheet";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { kanjiToCode } from "@/utils";
+import { kanjiToCode } from "@/lib/utils";
 
 const SVG_ROOT =
   "https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/";
@@ -21,12 +22,17 @@ const FormSchema = z.object({
 });
 
 export default function Home() {
+  const ref = useRef(null);
+  const handlePrint = useReactToPrint({
+    content: () => ref.current!,
+  });
+
   const jisho = new JishoAPI();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      kanjiList: "",
+      kanjiList: "一二三四五六七八九十",
     },
   });
 
@@ -61,11 +67,11 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center justify-between space-y-4 p-12">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex items-end gap-2"
+          className="flex items-center gap-2"
         >
           <FormField
             control={form.control}
@@ -85,14 +91,16 @@ export default function Home() {
               Generating
             </Button>
           )}
+
+          {!loading && kanji.length ? (
+            <Button onClick={handlePrint}>Print</Button>
+          ) : (
+            <Button disabled>Print</Button>
+          )}
         </form>
       </Form>
 
-      <div className="flex flex-col items-stretch justify-start gap-2">
-        {kanji.map((kanji, idx) => (
-          <PracticeGrid key={idx} kanji={kanji} />
-        ))}
-      </div>
+      <KanjiSheet ref={ref} kanji={kanji} />
     </main>
   );
 }
